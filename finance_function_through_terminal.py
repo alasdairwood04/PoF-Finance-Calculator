@@ -507,8 +507,148 @@ def dividend_discount_model():
 
 ## corporate finance functions
 
-#def 
 
+def NPV():
+    """Function to calculate the Net Present Value (NPV) of a project"""
+    
+    # Get number of periods from user
+    while True:
+        try:
+            N = int(input("Enter the number of periods (years): "))
+            if N <= 0:
+                print("Please enter a positive number of periods.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get initial investment (CF_0)
+    while True:
+        try:
+            initial_investment = float(input("Enter the initial investment (CF_0): "))
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get required return rate
+    while True:
+        try:
+            discount_rate = float(input("Enter the required return rate (as decimal, e.g., 0.10 for 10%): "))
+            if discount_rate <= 0:
+                print("Required return rate must be positive.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get cash flows for each period
+    cashflows = []
+    for year in range(1, N + 1):
+        while True:
+            try:
+                cf = float(input(f"Enter expected cash flow for year {year}: "))
+                cashflows.append(cf)
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+    
+    # Calculate NPV
+    npv = -initial_investment + sum(cf / (1 + discount_rate)**year 
+                                  for year, cf in enumerate(cashflows, 1))
+    return npv
+
+
+def PB():
+    """Function to calculate the Payback Period of a project"""
+    while True:
+        try:
+            years_before_cost_recovery = float(input("Enter the years_before_cost_recovery: "))
+            remaining_cost_to_recover = float(input("Enter the years_before_cost_recovery: "))
+            cash_flow_during_the_year = float(input("Enter the cash_flow_during_the_year: "))
+            return years_before_cost_recovery + remaining_cost_to_recover / cash_flow_during_the_year    
+        except ValueError:
+            print("Please enter valid numbers.")
+
+def IRR():
+    """
+    Function to calculate the Internal Rate of Return (IRR) of a project
+    Uses trial and error method to find the rate that makes NPV = 0
+    """
+    
+    # Get number of periods from user
+    while True:
+        try:
+            N = int(input("Enter the number of periods (years): "))
+            if N <= 0:
+                print("Please enter a positive number of periods.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get initial investment (CF_0)
+    while True:
+        try:
+            initial_investment = float(input("Enter the initial investment (CF_0): "))
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get cash flows for each period
+    cashflows = []
+    for year in range(1, N + 1):
+        while True:
+            try:
+                cf = float(input(f"Enter expected cash flow for year {year}: "))
+                cashflows.append(cf)
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+    
+    def calculate_npv(rate):
+        """Helper function to calculate NPV at a given rate"""
+        npv = -initial_investment + sum(cf / (1 + rate)**year 
+                                      for year, cf in enumerate(cashflows, 1))
+        return float(npv)  # Ensure we're returning a float
+    
+    # Trial and error method to find IRR
+    tolerance = 0.0001  # Acceptable difference from zero
+    max_iterations = 1000  # Maximum number of iterations to prevent infinite loops
+    
+    # Initial guesses for rate
+    rate_low = -0.99  # Starting with a wider range
+    rate_high = 2.0   # Up to 200%
+    iterations = 0
+    
+    while iterations < max_iterations:
+        rate_mid = (rate_low + rate_high) / 2
+        npv = calculate_npv(rate_mid)
+        
+        # Check if we've found a close enough solution
+        if abs(npv) < tolerance:
+            # Convert to percentage and round to 3 decimal places
+            return float(rate_mid)
+        
+        # If NPV is positive, increase rate by trying upper half
+        # If NPV is negative, decrease rate by trying lower half
+        if npv > 0:
+            rate_low = rate_mid
+        else:
+            rate_high = rate_mid
+            
+        iterations += 1
+    
+    # If no solution found within max iterations
+    return None  # Return None instead of string for error case
+
+
+# TODO: Capital Budgeting
+
+
+# TODO: Cost of Capital
+
+
+# TODO: Capital Structure
 
 
 def main():
@@ -562,7 +702,13 @@ def main():
         
         "Advanced Models": {
             '30': ('DDM with Constant Long Term Growth', ddm_with_constant_long_term_growth),
-        }
+        },
+
+        "Capital Budgeting": {
+            '31': ('Net Present Value (NPV)', NPV),
+            '32': ('Payback Period (PB)', PB),
+            '33': ('Internal Rate of Return (IRR)', IRR),
+    }
     }
 
     # Flatten the functions dictionary for easy lookup
