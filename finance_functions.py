@@ -3,6 +3,7 @@
 # Importing the necessary libraries
 import numpy as np
 import math
+from typing import List
 
 # Functions for financial markets
 
@@ -402,3 +403,20 @@ def put_option(S, K):
     :return: Put option
     """
     return max(K - S, 0)
+
+def PB():
+    """Function to calculate the Payback Period of a project"""
+    while True:
+        try:
+            years_before_cost_recovery = float(input("Enter the years_before_cost_recovery: "))
+            remaining_cost_to_recover = float(input("Enter the remaining_cost_to_recover: "))
+            cash_flow_during_the_year = float(input("Enter the cash_flow_during_the_year: "))
+            return years_before_cost_recovery + remaining_cost_to_recover / cash_flow_during_the_year    
+        except ValueError:
+            print("Please enter valid numbers.")
+
+
+def main():
+    print(PB())
+
+main()
