@@ -43,21 +43,54 @@ def present_value():
             print("Please enter valid numbers.")
 
 def PV_of_cashflow_stream():
-    """Function to calculate the present value of a cash flow stream"""
+    """Function to calculate the present value of a cash flow stream with varying cash flows"""
+    
+    # Get number of periods from user
     while True:
         try:
-            cashflows = float(input("Enter cash flow amount: "))
-            r = float(input("Enter interest rate (as decimal, e.g., 0.05 for 5%): "))
-            N = int(input("Enter number of periods: "))
-            if r < 0:
-                print("Interest rate cannot be negative.")
+            N = int(input("Enter the number of periods (years): "))
+            if N <= 0:
+                print("Please enter a positive number of periods.")
                 continue
-            if N < 0:
-                print("Number of periods cannot be negative.")
-                continue
-            return sum([cashflows / pow(1 + r, n) for n in range(N+1)])
+            break
         except ValueError:
-            print("Please enter valid numbers.")
+            print("Please enter a valid number.")
+    
+    # Get initial investment (CF_0)
+    while True:
+        try:
+            initial_investment = float(input("Enter the initial investment (CF_0): "))
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get interest rate
+    while True:
+        try:
+            r = float(input("Enter the interest rate (as decimal, e.g., 0.05 for 5%): "))
+            if r <= 0:
+                print("Interest rate must be positive.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get cash flows for each period
+    cashflows = []
+    for year in range(1, N + 1):
+        while True:
+            try:
+                cf = float(input(f"Enter expected cash flow for year {year}: "))
+                cashflows.append(cf)
+                break
+            except ValueError:
+                print("Please enter a valid number.")
+    
+    # Calculate present value
+    pv = -initial_investment + sum(cf / (1 + r)**year 
+                                for year, cf in enumerate(cashflows, 1))
+    
+    return pv
 
 def pv_perpetuity():
     """Function to calculate the present value of a perpetuity"""
@@ -174,6 +207,19 @@ def APR_to_EAR():
                 print("Number of compounding periods must be positive.")
                 continue
             return (1 + APR / k) ** k - 1
+        except ValueError:
+            print("Please enter valid numbers.")
+
+def EAR_to_APR():
+    """Function to convert EAR to APR"""
+    while True:
+        try:
+            EAR = float(input("Enter EAR (as decimal, e.g., 0.05 for 5%): "))
+            k = int(input("Enter number of compounding periods per year: "))
+            if k <= 0:
+                print("Number of compounding periods must be positive.")
+                continue
+            return k * ((1 + EAR) ** (1 / k) - 1)
         except ValueError:
             print("Please enter valid numbers.")
 
@@ -669,45 +715,46 @@ def main():
             '10': ('Equivalent Discount Period Conversion', eq_discount_period_conversion),
             '11': ('Interest Rate per Compounding Period', interest_rate_per_compounding_period),
             '12': ('APR to EAR', APR_to_EAR),
-            '13': ('Growth in Purchasing Power', growth_in_purch_power),
-            '14': ('Real Interest Rate', real_interest_rate),
+            '13': ('EAR to APR', EAR_to_APR),
+            '14': ('Growth in Purchasing Power', growth_in_purch_power),
+            '15': ('Real Interest Rate', real_interest_rate),
         },
         
         "Bond Calculations": {
-            '15': ('Coupon Payment', coupon_payment_CPN),
-            '16': ('Zero Coupon Bond Price', price_zero_coupon_bond),
-            '17': ('YTM of Zero Coupon Bond', YTM_of_n_year_zero_coupon_bond),
-            '18': ('YTM of Coupon Bond', YTM_of_coupon_bond),
+            '16': ('Coupon Payment', coupon_payment_CPN),
+            '17': ('Zero Coupon Bond Price', price_zero_coupon_bond),
+            '18': ('YTM of Zero Coupon Bond', YTM_of_n_year_zero_coupon_bond),
+            '19': ('YTM of Coupon Bond', YTM_of_coupon_bond),
         },
         
         "Stock Valuation": {
-            '19': ('One Year Stock Price', price_of_stock_one_year_investor),
-            '20': ('Total Return', total_return),
-            '21': ('Multi-Year Stock Price', price_multi_year_investor),
-            '22': ('Dividend Discount Model', dividend_discount_model),
-            '23': ('Constant Dividend Growth Model', constant_dividend_growth_model),
-            '24': ('Dividend Per Share Ratio', dividend_per_share_ratio),
+            '20': ('One Year Stock Price', price_of_stock_one_year_investor),
+            '21': ('Total Return', total_return),
+            '22': ('Multi-Year Stock Price', price_multi_year_investor),
+            '23': ('Dividend Discount Model', dividend_discount_model),
+            '24': ('Constant Dividend Growth Model', constant_dividend_growth_model),
+            '25': ('Dividend Per Share Ratio', dividend_per_share_ratio),
         },
         
         "Firm Valuation": {
-            '25': ('Enterprise Value', enterprise_value),
-            '26': ('Free Cash Flow', free_cashflow),
-            '27': ('Net Investment', net_investment),
+            '26': ('Enterprise Value', enterprise_value),
+            '27': ('Free Cash Flow', free_cashflow),
+            '28': ('Net Investment', net_investment),
         },
         
         "Options": {
-            '28': ('Call Option Value', call_option),
-            '29': ('Put Option Value', put_option),
+            '29': ('Call Option Value', call_option),
+            '20': ('Put Option Value', put_option),
         },
         
         "Advanced Models": {
-            '30': ('DDM with Constant Long Term Growth', ddm_with_constant_long_term_growth),
+            '31': ('DDM with Constant Long Term Growth', ddm_with_constant_long_term_growth),
         },
 
         "Capital Budgeting": {
-            '31': ('Net Present Value (NPV)', NPV),
-            '32': ('Payback Period (PB)', PB),
-            '33': ('Internal Rate of Return (IRR)', IRR),
+            '32': ('Net Present Value (NPV)', NPV),
+            '33': ('Payback Period (PB)', PB),
+            '34': ('Internal Rate of Return (IRR)', IRR),
     }
     }
 
