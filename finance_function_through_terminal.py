@@ -87,7 +87,7 @@ def PV_of_cashflow_stream():
                 print("Please enter a valid number.")
     
     # Calculate present value
-    pv = -initial_investment + sum(cf / (1 + r)**year 
+    pv = initial_investment + sum(cf / (1 + r)**year 
                                 for year, cf in enumerate(cashflows, 1))
     
     return pv
@@ -778,7 +778,7 @@ def main():
         print("0. Exit")
         print("=" * 50)
 
-        choice = input("\nEnter your choice (0-30): ")
+        choice = input("\nEnter your choice (0-34): ")
 
         if choice == '0':
             print("\nThank you for using the Financial Calculator!")
