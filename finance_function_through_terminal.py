@@ -289,19 +289,112 @@ def YTM_of_n_year_zero_coupon_bond():
             print("Please enter valid numbers.")
 
 def YTM_of_coupon_bond():
-    """Function to calculate the yield to maturity of a coupon bond"""
+    """
+    Function to calculate the Yield to Maturity (YTM) of a coupon bond
+    Uses trial and error method to find the rate that makes bond price equal to present value of cash flows
+    """
+    
+    # Get bond face value
     while True:
         try:
-            CPN = float(input("Enter coupon payment: "))
-            FV = float(input("Enter face value: "))
-            YTM = float(input("Enter yield to maturity (as decimal, e.g., 0.05 for 5%): "))
-            N = int(input("Enter number of periods: "))
-            if N <= 0:
-                print("Number of periods must be positive.")
+            face_value = float(input("Enter the face value of the bond: "))
+            if face_value <= 0:
+                print("Please enter a positive face value.")
                 continue
-            return CPN * (1 / YTM) * (1 - 1 / (1 + YTM) ** N) + FV / (1 + YTM) ** N
+            break
         except ValueError:
-            print("Please enter valid numbers.")
+            print("Please enter a valid number.")
+            
+    # Get current bond price
+    while True:
+        try:
+            current_price = float(input("Enter the current market price of the bond: "))
+            if current_price <= 0:
+                print("Please enter a positive price.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get coupon rate (annual)
+    while True:
+        try:
+            coupon_rate = float(input("Enter the annual coupon rate (as decimal, e.g., 0.05 for 5%): "))
+            if coupon_rate < 0:
+                print("Please enter a non-negative coupon rate.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get time to maturity
+    while True:
+        try:
+            years_to_maturity = int(input("Enter years to maturity: "))
+            if years_to_maturity <= 0:
+                print("Please enter a positive number of years.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+    
+    # Get payments per year
+    while True:
+        try:
+            payments_per_year = int(input("Enter number of payments per year (e.g., 2 for semi-annual): "))
+            if payments_per_year <= 0:
+                print("Please enter a positive number of payments.")
+                continue
+            break
+        except ValueError:
+            print("Please enter a valid number.")
+            
+    # Calculate coupon payment per period
+    coupon_per_period = (face_value * coupon_rate) / payments_per_year
+    total_periods = years_to_maturity * payments_per_year
+    
+    def calculate_bond_price(ytm):
+        """Helper function to calculate bond price at a given YTM"""
+        period_yield = ytm / payments_per_year
+        price = 0
+        
+        # Calculate PV of coupon payments
+        for period in range(1, total_periods + 1):
+            price += coupon_per_period / ((1 + period_yield) ** period)
+            
+        # Add PV of face value
+        price += face_value / ((1 + period_yield) ** total_periods)
+        
+        return float(price)
+    
+    # Trial and error method to find YTM
+    tolerance = 0.0001
+    max_iterations = 1000
+    
+    # Initial guesses for YTM
+    ytm_low = 0
+    ytm_high = 1  # 100%
+    iterations = 0
+    
+    while iterations < max_iterations:
+        ytm_mid = (ytm_low + ytm_high) / 2
+        price = calculate_bond_price(ytm_mid)
+        price_difference = price - current_price
+        
+        # Check if we've found a close enough solution
+        if abs(price_difference) < tolerance:
+            return ytm_mid * 100  # Convert to percentage
+        
+        # If calculated price is higher than market price, increase YTM
+        # If calculated price is lower than market price, decrease YTM
+        if price_difference > 0:
+            ytm_low = ytm_mid
+        else:
+            ytm_high = ytm_mid
+            
+        iterations += 1
+    
+    return None  # Return None if no solution found
 
 def price_of_stock_one_year_investor():
     """Function to calculate the price of a stock for a one-year investor"""
